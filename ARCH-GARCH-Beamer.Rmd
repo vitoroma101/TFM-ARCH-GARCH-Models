@@ -1,0 +1,326 @@
+---
+output: 
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "orchid"
+    fonttheme: "structurebold"
+  html_document: default
+---
+\begin{center}
+\vspace{-0.5cm} % Ajusta este valor para bajar el logo
+\includegraphics[width=0.3\textwidth]{UGR-MARCA-01-color.jpg}\par\vspace{0.5cm}
+\large \textbf{Series Temporales Avanzadas: Modelos Heterocedásticos ARCH y GARCH}\\
+\vspace{0.4cm}
+\small Presentación del TFM como requisito parcial para optar al título de:\\
+\textbf{\small Máster en Estadística Aplicada}\\
+\vspace{0.4cm}
+\small \textbf{Victor Eduardo Romero Cueva}\\
+\vspace{0.4cm}
+\small Director: Dr. Francisco Alonso Morales\\
+\vspace{0.4cm}
+\small Granada, España 2024
+\end{center}
+
+---
+
+# Introducción
+
+- La volatilidad del mercado es un indicador crucial para entender las dinámicas financieras, tomar decisiones informadas en inversiones, y gestionar el riesgo. Comprenderla y predecirla es vital para inversores y responsables de políticas.
+- Los modelos ARCH y GARCH son herramientas clave en el análisis financiero, capaces de modelar y prever la volatilidad en series temporales con fluctuaciones intensas y aparentemente aleatorias.
+- Son especialmente útiles para series extensas y no estacionarias, comunes en datos financieros, donde tendencias y variaciones estacionales pueden afectar la interpretación y el pronóstico.
+- ARCH y GARCH destacan por su capacidad de modelar la heterocedasticidad condicional, una característica clave de muchas series temporales financieras con volatilidad variable en el tiempo.
+- Este estudio aplica estos modelos a las series de precios de las acciones de Corporación Favorita, una empresa líder en el mercado ecuatoriano, para evaluar su capacidad predictiva en contextos de volatilidad.
+
+# Objetivos
+
+- **Objetivo General**:
+  - Desarrollar y validar modelos ARCH y GARCH, con el fin de predecir la volatilidad de los precios de las acciones utilizando datos históricos de series temporales financieras.
+
+- **Objetivos Específicos**:
+  - Comprender la teoría subyacente a los modelos de heterocedasticidad condicional autorregresiva, incluyendo sus definiciones, características distintivas y propiedades.
+  - Identificar qué tipos de series temporales son adecuadas para estos modelos, las transformaciones necesarias para su modelado y las técnicas esenciales para implementarlos correctamente.
+  - Aplicar estas técnicas a las series temporales financieras de Corporación Favorita, con el objetivo de modelarlas adecuadamente utilizando el modelo que mejor se ajuste a los datos específicos de esta.
+  
+# Fundamentación Teórica
+
+- Los modelos ARCH (Autoregressive Conditional Heteroskedasticity) fueron introducidos por Engle en 1982 para modelar la volatilidad en series temporales financieras. Capturan la **heterocedasticidad condicional**, donde la varianza de los errores cambia con el tiempo y depende de los errores pasados:
+  \[
+  \sigma_t^2 = \alpha_0 + \alpha_1 \epsilon_{t-1}^2 + \dots + \alpha_q \epsilon_{t-q}^2
+  \]
+  donde \(\sigma_t^2\) es la **varianza condicional** y \(\epsilon_{t}\) es el término de error.
+
+- Los modelos GARCH (Generalized Autoregressive Conditional Heteroskedasticity), desarrollados por Bollerslev en 1986, generalizan los modelos ARCH al incluir un **componente autorregresivo** en la varianza, permitiendo que la varianza condicional dependa tanto de los **errores pasados** como de la **varianza pasada**:
+  \[
+  \sigma_t^2 = \alpha_0 + \alpha_1 \epsilon_{t-1}^2 + \dots + \alpha_q \epsilon_{t-q}^2 + \beta_1 \sigma_{t-1}^2 + \dots + \beta_p \sigma_{t-p}^2
+  \]
+  donde \(\beta_p\) captura el efecto de la varianza pasada.
+
+# Fundamentación Teórica 
+**¿Qué respuesta dan los modelos ARCH y GARCH que no modelizan los procesos SARIMA?**
+
+- **SARIMA** modela la **media condicional** y maneja **estacionalidad** con diferenciación para hacer la serie **estacionaria**:
+  \[
+  (1 - \phi(B))(1 - B^s)^D(1 - B)^d y_t = \theta(B)\epsilon_t
+  \]
+  - **Asume varianza constante**:
+  \[
+  \epsilon_t \sim N(0, \sigma^2)
+  \]
+
+- **ARCH** y **GARCH** modelan la **varianza condicional**, que varía según los errores y, en GARCH, también según la varianza pasada:
+  \[
+  \epsilon_t = z_t \sigma_t, \quad z_t \sim N(0, 1)
+  \]
+
+**ARCH**: \( \sigma_t^2 \) depende de los errores pasados.
+
+**GARCH**: \( \sigma_t^2 \) depende de errores y varianza pasada.
+
+# Fundamentación Teórica 
+
+- La selección adecuada del orden en los modelos ARCH y GARCH es fundamental para garantizar un equilibrio entre parsimonia y estabilidad numérica en la estimación. Criterios como AIC y BIC son comúnmente utilizados para esta selección.
+- La heterocedasticidad condicional, una característica prominente en muchas series temporales financieras, se refiere a la variación de la volatilidad a lo largo del tiempo. Esta propiedad hace que los modelos ARCH y GARCH sean especialmente valiosos para capturar dinámicas complejas en los datos financieros.
+
+# Metodología
+
+- **Software Utilizado**: El análisis se realizó en R, con un enfoque destacado en el ajuste de modelos GARCH.
+- **Datos Utilizados**: Se emplearon datos de los precios de cierre de las acciones de Corporación Favorita, obtenidos de la Bolsa de Valores de Guayaquil (BVG), abarcando desde el 2 de enero de 2019 hasta el 13 de mayo de 2024, con un total de 1282 observaciones.
+- **Preprocesamiento**: Los datos fueron filtrados y transformados en una serie temporal en R, asegurando la consistencia de la serie y seleccionando el último precio de cierre registrado por día.
+- **Enfoque Box-Jenkins Adaptado**: Se aplicó la metodología Box-Jenkins, tradicionalmente asociada con modelos ARIMA, de manera adaptada para incluir también los modelos GARCH.
+
+# Análisis de Resultados
+**Estudio Preliminar de la Serie Temporal**
+
+- El análisis inicial mediante gráficos se centró en examinar la evolución del precio de las acciones de Corporación Favorita a lo largo del tiempo. Posteriormente, se revisaron los rendimientos logarítmicos diarios y sus transformaciones (al cuadrado y absolutos), junto con las autocorrelaciones simples, para evaluar la dependencia temporal en los datos.
+
+- Seguidamente, se aplicaron los contrastes formales para la detección de efectos ARCH, utilizando el test de Ljung-Box sobre los rendimientos al cuadrado y la prueba LM (Lagrange Multiplier) para confirmar la presencia de heterocedasticidad en la serie. 
+
+# Análisis de Resultados
+**Estudio Preliminar: precios, volatilidad, retornos, heterocedasticidad...** 
+
+::: columns
+
+:::: column
+
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\precio_cierre.png")
+```
+
+::::
+
+:::: column
+
+En este gráfico, se observa la evolución del precio de cierre de las acciones de Corporación Favorita a lo largo del tiempo. 
+
+::::
+
+:::
+
+# Análisis de Resultados
+
+```{r, echo=FALSE, out.width="70%", out.height="85%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\rendimientos_graficos.png")
+```
+
+# Análisis de Resultados
+
+```{r, echo=FALSE, fig.cap="Gráfico de Autocorrelación de las Acciones", out.width="70%", out.height="85%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\autocorrelacion_graficos.png")
+```
+
+# Análisis de Resultados
+
+**Estudio Preliminar: Pruebas Efectos ARCH en retornos diarios**
+
+ \(H_0\): No hay efectos ARCH en los datos (homocedasticidad).
+
+ \(H_1\): Hay efectos ARCH en los datos (heterocedasticidad).
+
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\ef_arch_garch.png")
+```
+
+# Análisis de Resultados
+
+**Modelos ARIMA**
+
+- Se ajustaron modelos ARIMA a los rendimientos logarítmicos diarios de la serie temporal. 
+
+- Complementariamente, se realizaron pruebas de diagnóstico en los residuos del modelo ARIMA, utilizando el test de Ljung-Box, además de analizar gráficamente la autocorrelación simple, el histograma respectivo y su comportamiento a lo largo del tiempo, con el fin de evaluar la idoneidad del modelo.
+
+# Análisis de Resultados
+
+**Modelado ARIMA**
+
+```{r, echo=FALSE,out.width="50%", out.height="50%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\arima_model.png")
+```
+
+
+Se ajustó el modelo MA(3) con media nula utilizando la función auto.arima para los rendimientos logarítmicos diarios.
+Los residuos del modelo mostraron signos de heterocedasticidad, lo que motivó la exploración de modelos ARCH y GARCH.
+
+
+# Análisis de Resultados
+
+```{r, echo=FALSE,out.width="80%", out.height="80%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\residuals_modelo_arima.png")
+```
+
+# Análisis de Resultados
+
+**Habemus heterocedasticidad...** 
+
+- Se realizó una regresión de los residuos al cuadrado contra sus retardos, complementada con gráficos de los residuos al cuadrado, para examinar la estructura de la varianza en la serie. 
+
+- Además, en esta parte, se analizaron los gráficos ACF y PACF tanto de los residuos simples como de los residuos al cuadrado, comparando la persistencia de autocorrelaciones significativas, lo que ayudó a evaluar la necesidad de aplicar modelos GARCH.
+
+
+# Análisis de Resultados
+
+```{r, echo=FALSE,out.width="90%", out.height="70%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\errores_cuadrado.png")
+```
+
+# Análisis de Resultados
+
+```{r, echo=FALSE,out.width="90%", out.height="80%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\grid_acf_pacf.png")
+```
+
+
+# Análisis de Resultados
+
+**Modelado GARCH**
+
+Se procedió al ajuste de modelos ARCH y GARCH, seleccionando el modelo óptimo basado en criterios de información como el AIC (Akaike Information Criterion) y el BIC (Bayesian Information Criterion).
+
+# Análisis de Resultados
+
+**Modelado GARCH**
+
+::: columns
+
+:::: column
+```{r, echo=FALSE,out.width="100%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\criterios.png")
+```
+::::
+
+:::: column
+- Los modelos ARCH(2), ARCH(3) y GARCH(2,1) ofrecieron el mejor equilibrio entre ajuste y parsimonia.
+::::
+
+:::
+
+
+# Análisis de Resultados
+
+**ARCH(2)**
+```{r, echo=FALSE,out.width="40%", out.height="60%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\ou_arch2.png")
+```
+
+# Análisis de Resultados
+
+**ARCH(2)**
+```{r, echo=FALSE,out.width="40%", out.height="60%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\roberr2.png")
+```
+
+# Análisis de Resultados
+
+**Validación del Modelo Final y Pronósticos**
+
+- Posteriormente, se realizaron pruebas de diagnóstico en los residuos estandarizados del modelo definitivo, incluyendo el test de Ljung-Box para evaluar la autocorrelación y la prueba ARCH LM (Lagrange Multiplier) para detectar la presencia de efectos ARCH.
+
+- Para evaluar visualmente la capacidad del modelo ajustado, se generaron gráficos que comparan los retornos diarios con la volatilidad condicional estimada, junto con la ACF de los residuos al cuadrado, el QQ plot de los residuos estandarizados y un pronóstico de la volatilidad futura.
+
+# Análisis de Resultados
+
+**Validación del Modelo Final y Pronósticos**
+
+*Box-Ljung test:*
+
+data: standardized_residuals_arch2  
+X-squared = 20.582, df = 12, p-value = 0.05684
+
+*ARCH LM-test:*
+
+Null hypothesis: no ARCH effects  
+data: standardized_residuals_arch2  
+Chi-squared = 0.86231, df = 12, p-value = 1
+
+*Jarque Bera Test:*
+
+data: standardized_residuals_arch2  
+X-squared = 81684, df = 2, p-value < 2.2e-16
+
+# Análisis de Resultados
+
+**Validación del Modelo Final y Pronósticos**
+
+```{r, echo=FALSE,out.width="90%", out.height="70%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\grid_volatil.png")
+```
+
+# Análisis de Resultados
+
+**Validación del Modelo Final y Pronósticos**
+
+```{r, echo=FALSE,out.width="85%", out.height="80%"}
+knitr::include_graphics("E:\\Documents\\UGR\\TEMPORALES_\\TFM_\\updtd\\BEAMER\\acf_qqplot_residuos.png")
+```
+
+# Análisis de Resultados
+
+**Modelo definitivo ajustado**
+
+\[
+r_t = \text{ma1} \cdot \epsilon_{t-1} + \text{ma3} \cdot \epsilon_{t-3} + \epsilon_t
+\]
+
+\[
+\sigma^2_t = \omega + \alpha_1 \cdot \epsilon^2_{t-1} + \alpha_2 \cdot \epsilon^2_{t-2}
+\]
+
+\[
+r_t = -0.3913 \cdot \epsilon_{t-1} + 0.0635 \cdot \epsilon_{t-3} + \epsilon_t
+\]
+
+\[
+\sigma^2_t = 0.000098 + 0.197250 \cdot \epsilon^2_{t-1} + 0.779869 \cdot \epsilon^2_{t-2}
+\]
+
+# Análisis de Resultados
+
+**Pronóstico**
+
+Model: sGARCH  
+Horizon: 7  
+Roll Steps: 0  
+Out of Sample: 0
+
+0-roll forecast [T0=1281-01-01]:
+
+| Series | Sigma   |
+|--------|---------|
+| T+1    | 0.01050 |
+| T+2    | 0.01095 |
+| T+3    | 0.01441 |
+| T+4    | 0.01525 |
+| T+5    | 0.01748 |
+| T+6    | 0.01843 |
+| T+7    | 0.02008 |
+
+# Conclusiones
+
+1. **Modelos ARCH y GARCH:** Permiten modelar y predecir la volatilidad en series financieras de forma efectiva.
+
+2. **Heterocedasticidad:** Se justificó el uso de estos modelos al detectar heterocedasticidad en los residuos del modelo ARMA.
+
+3. **Aplicaciones Financieras:** Son útiles para la gestión de carteras y predicción de volatilidad en entornos de alta incertidumbre.
+
+4. **Validación del Modelo:** Las pruebas de diagnóstico validaron la capacidad de estos modelos para capturar la volatilidad en Corporación Favorita.
+
+5. **Limitación:** No capturan bien eventos extremos, lo que podría mejorarse con extensiones como EGARCH o TGARCH, entre otros.
