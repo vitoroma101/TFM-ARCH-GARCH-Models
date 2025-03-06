@@ -3,13 +3,13 @@ Repository Contents
 
 Below is a description of each file included in the repository:  
 
-ARCH-GARCH-Beamer.Rmd: R Markdown document used to generate a presentation explaining the methodological approach, results, and conclusions of the analysis.  
+**ARCH-GARCH-Beamer.Rmd**: R Markdown document used to generate a presentation explaining the methodological approach, results, and conclusions of the analysis.  
 
-ARCH-GARCH-Beamer.pdf: PDF file containing the generated presentation, intended for use as a visual aid during the TFM defense.  
+**ARCH-GARCH-Beamer.pdf**: PDF file containing the generated presentation, intended for use as a visual aid during the TFM defense.  
 
-ARCH-GARCH-Analysis.R: R script containing the source code used to perform the data analysis, implement the models, and generate the presented results.  
+**ARCH-GARCH-Analysis.R**: R script containing the source code used to perform the data analysis, implement the models, and generate the presented results.  
 
-BVG-acciones.xlsx: Excel file containing the financial time series data used as the basis for the analysis.  
+**BVG-acciones.xlsx**: Excel file containing the financial time series data used as the basis for the analysis.  
 
-TFM-ARCH-GARCH-Financial-Time-Series.pdf: PDF document containing the full Master's Thesis, covering the theoretical framework, methodology, analysis, and findings.
+**TFM-ARCH-GARCH-Financial-Time-Series.pdf**: PDF document containing the full Master's Thesis, covering the theoretical framework, methodology, analysis, and findings.
 
